@@ -65,10 +65,12 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-
+Some basic commands for start new task:
+```
 php artisan make:model Billing -mcr --requests
 
 php artisan make:view billings.index
 php artisan make:view billings.create
 php artisan make:view billings.edit
 php artisan make:view billings.show
+```
