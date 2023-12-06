@@ -57,9 +57,11 @@ class ScrumController extends Controller
      */
     public function create()
     {
+        $selectedDate = Carbon::today();
         $clients = Client::get();
         return view('scrums.create', [
-            'clients' => $clients
+            'clients' => $clients,
+            'matchData' => $selectedDate
         ]);
     }
 

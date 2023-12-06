@@ -41,7 +41,12 @@ class PermissionSeeder extends Seeder
             'show-scrum',
             'create-scrum',
             'edit-scrum',
-            'delete-scrum'
+            'delete-scrum',
+
+            'show-report',
+            'create-report',
+            'edit-report',
+            'delete-report',
          ];
  
           // Looping and Inserting Array's Permissions into Permission Table

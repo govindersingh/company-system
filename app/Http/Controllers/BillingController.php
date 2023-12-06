@@ -8,6 +8,7 @@ use App\Http\Requests\StoreBillingRequest;
 use App\Http\Requests\UpdateBillingRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Carbon\Carbon;
 
 class BillingController extends Controller
 {
@@ -35,9 +36,11 @@ class BillingController extends Controller
      */
     public function create()
     {
+        $selectedDate = Carbon::today();
         $projects = Project::get();
         return view('billings.create', [
-            'projects' => $projects
+            'projects' => $projects,
+            'matchDate' => $selectedDate,
         ]);
     }
 

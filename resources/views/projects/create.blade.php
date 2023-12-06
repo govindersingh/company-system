@@ -56,7 +56,7 @@
                     <div class="mb-3 row">
                         <label for="start_date" class="col-md-4 col-form-label text-md-end text-start">Start Date</label>
                         <div class="col-md-6">
-                          <input type="date" class="form-control @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}">
+                          <input type="date" class="form-control @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ $matchDate ? $matchDate->format('Y-m-d') : '' }}">
                             @if ($errors->has('start_date'))
                                 <span class="text-danger">{{ $errors->first('start_date') }}</span>
                             @endif
@@ -66,7 +66,7 @@
                     <div class="mb-3 row">
                         <label for="end_date" class="col-md-4 col-form-label text-md-end text-start">End Date</label>
                         <div class="col-md-6">
-                          <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}">
+                          <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ $matchDate ? $matchDate->format('Y-m-d') : '' }}">
                             @if ($errors->has('end_date'))
                                 <span class="text-danger">{{ $errors->first('end_date') }}</span>
                             @endif

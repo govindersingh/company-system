@@ -42,7 +42,12 @@ class RoleSeeder extends Seeder
             'show-scrum',
             'create-scrum',
             'edit-scrum',
-            'delete-scrum'
+            'delete-scrum',
+
+            'show-report',
+            'create-report',
+            'edit-report',
+            'delete-report'
         ]);
 
         $clientManager->givePermissionTo([
@@ -64,7 +69,12 @@ class RoleSeeder extends Seeder
             'show-scrum',
             'create-scrum',
             'edit-scrum',
-            'delete-scrum'
+            'delete-scrum',
+
+            'show-report',
+            'create-report',
+            'edit-report',
+            'delete-report'
         ]);
 
         $developer->givePermissionTo([

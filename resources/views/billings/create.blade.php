@@ -46,7 +46,7 @@
                     <div class="mb-3 row">
                         <label for="date" class="col-md-4 col-form-label text-md-end text-start">Date</label>
                         <div class="col-md-6">
-                          <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" value="{{ old('date') }}">
+                          <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" value="{{ $matchDate ? $matchDate->format('Y-m-d') : '' }}">
                             @if ($errors->has('date'))
                                 <span class="text-danger">{{ $errors->first('date') }}</span>
                             @endif

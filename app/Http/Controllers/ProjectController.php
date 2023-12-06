@@ -9,6 +9,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Carbon\Carbon;
 
 class ProjectController extends Controller
 {
@@ -36,9 +37,11 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        $selectedDate = Carbon::today();
         $clients = Client::get();
         return view('projects.create', [
-            'clients' => $clients
+            'clients' => $clients,
+            'matchDate' => $selectedDate,
         ]);
     }
 

@@ -8,6 +8,8 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ScrumController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ToolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +30,11 @@ Auth::routes();
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/scrums/getprojectsbyclientid/{client}', [ScrumController::class, 'getProjectsByClientId'])->name('scrums.projects');
+
+Route::get('/tools/csv_to_json', function(){ return view('tools.csv_to_json'); })->name('tools.csv_to_json');
+Route::post('/tools/csv_to_json_process', [ToolController::class, 'csvToJson'])->name('tools.csv_to_json_process');
+
 Route::resources([
     'roles' => RoleController::class,
     'users' => UserController::class,
@@ -35,6 +42,8 @@ Route::resources([
     'projects' => ProjectController::class,
     'billings' => BillingController::class,
     'scrums' => ScrumController::class,
+    'reports' => ReportController::class,
+    'tools' => ToolController::class,
 ]);
 
-Route::get('/scrums/getprojectsbyclientid/{client}', [ScrumController::class, 'getProjectsByClientId'])->name('scrums.projects');
+

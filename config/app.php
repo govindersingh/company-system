@@ -194,8 +194,8 @@ return [
     ],
 
     'enum_billing_status' => [
-        'Unpaid',
         'Paid',
+        'Unpaid',
         'Overdue'
     ],
 
