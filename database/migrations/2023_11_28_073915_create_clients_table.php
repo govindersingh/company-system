@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->enum('platform', ['Upwork', 'Fiver', 'Slack', 'WhatsApp', 'Skype', 'Other']);
             $table->longText('description')->nullable();

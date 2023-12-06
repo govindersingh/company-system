@@ -36,11 +36,15 @@
                             <a href="{{ route('scrums.show', $scrum->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-eye"></i> Show</a>
 
                             @can('edit-scrum')
+                            @if(Auth::user()->id == $scrum->user_id)
                                 <a href="{{ route('scrums.edit', $scrum->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                            @endif
                             @endcan
 
                             @can('delete-scrum')
+                            @if(Auth::user()->id == $scrum->user_id)
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Do you want to delete this scrum?');"><i class="bi bi-trash"></i> Delete</button>
+                            @endif
                             @endcan
                         </form>
                     </td>

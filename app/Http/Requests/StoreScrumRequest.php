@@ -26,7 +26,7 @@ class StoreScrumRequest extends FormRequest
             'client_id' => 'required|integer|max:250',
             'project_id' => 'required|integer|max:250',
             'user_id' => 'required|integer|max:250',
-            'description' => 'required|string|max:250',
+            'description' => 'required|string',
             'working_hours' => 'required|integer|max:250',
             'date' => 'required|date',
         ];
