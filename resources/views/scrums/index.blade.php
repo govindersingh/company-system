@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="card">
-    <div class="card-header d-flex justify-content-between">Scrum List <strong class="d-flex text-nowrap align-items-center gap-2" text-right>Fetch Result For: <input type="date" id="fetchData" value="{{ $matchData ? $matchData->format('Y-m-d') : '' }}" class="form-control"></strong></div>
+    <div class="card-header d-flex justify-content-between">Scrum List <strong class="d-flex text-nowrap align-items-center gap-2" text-right>Fetch Result For: <input type="date" id="fetchData" value="{{ $matchDate ? $matchDate->format('Y-m-d') : '' }}" class="form-control"></strong></div>
     <div class="card-body">
         @can('create-scrum')
             <a href="{{ route('scrums.create') }}" class="btn btn-success btn-sm my-2"><i class="bi bi-plus-circle"></i> Add New Scrum</a>

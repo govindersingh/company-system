@@ -48,7 +48,7 @@ class ScrumController extends Controller
 
         return view('scrums.index', [ 
             'scrums' => $scrums,
-            'matchData' => $selectedDate
+            'matchDate' => $selectedDate
         ]);
     }
 
@@ -61,7 +61,7 @@ class ScrumController extends Controller
         $clients = Client::get();
         return view('scrums.create', [
             'clients' => $clients,
-            'matchData' => $selectedDate
+            'matchDate' => $selectedDate
         ]);
     }
 
