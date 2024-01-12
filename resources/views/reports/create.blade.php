@@ -148,8 +148,11 @@
             var index = input.getAttribute("data-index");
             var status = input.getAttribute("data-status");
 
-            milestonesData.push({milestone: index, price: price, status: (milestone_index == index) ? 'paid' : 'unpaid'});
-            document.getElementById('milestonesDataInput').value = JSON.stringify(milestonesData);
+            milestonesData.push({
+                milestone: index, 
+                price: price, 
+                status: (milestone_index == index || status == 'paid') ? 'paid' : 'unpaid'
+            });
 
             if(status == 'paid'){
                 document.querySelector(`.input_${index}`).classList.add('bg-success', 'text-light');
@@ -162,6 +165,8 @@
                 document.querySelector(`.input_${index}`).classList.add('bg-warning', 'text-dark');
             }
         });
+        document.getElementById('milestonesDataInput').value = JSON.stringify(milestonesData);
+        console.log(milestonesData);
         document.getElementById('total').value = milestone_price;
         document.getElementById('total_real').value = milestone_price;
     }
