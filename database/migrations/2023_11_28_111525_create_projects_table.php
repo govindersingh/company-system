@@ -17,10 +17,12 @@ return new class extends Migration
             $table->string('name');
             $table->longText('description')->nullable();
             $table->date('start_date');
-            $table->date('end_date');
-            $table->double('budget', 8, 2);
-            $table->enum('status', ['Planned', 'In progress', 'Completed', 'Cancelled']);
-            $table->longText('details')->nullable();
+            $table->date('end_date')->nullable();
+            $table->enum('project_type', ['Fixed', 'Hourly']);
+            $table->json('milestones_rate')->nullable();
+            $table->double('hourly_rate', 8, 2)->nullable();
+            $table->double('budget', 8, 2)->nullable();
+            $table->enum('status', ['Open', 'Close', 'Cancel']);
             $table->timestamps();
 
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');

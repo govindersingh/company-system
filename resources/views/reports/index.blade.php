@@ -14,9 +14,8 @@
                 <th scope="col">Client Name</th>
                 <th scope="col">Project Name</th>
                 <th scope="col">Developer Name</th>
-                <!-- <th scope="col">Date</th> -->
+                <th scope="col">Project Type</th>
                 <th scope="col">Working Hours</th>
-                <th scope="col">Price</th>
                 <th scope="col">Total</th>
                 <th scope="col">Action</th>
                 </tr>
@@ -28,10 +27,9 @@
                     <td>{{ $report->client->name }}</td>
                     <td>{{ $report->project->name }}</td>
                     <td>{{ $report->user->name }}</td>
-                    <!-- <td>{{ $report->date }}</td> -->
+                    <td>{{ $report->project->project_type }}</td>
                     <td>{{ $report->working_hours }}</td>
-                    <td>{{ $report->price }}</td>
-                    <td>{{ $report->total }}</td>
+                    <td>${{ $report->total }}</td>
                     
                     <td>
                         <form action="{{ route('reports.destroy', $report->id) }}" method="post">
@@ -66,7 +64,7 @@
 
     <div class="col-md-12 mt-5">
         <div class="card">
-            <div class="card-header text-center"><h3>( <strong>Hours: {{$WorkingHours}} </strong> ) ( <strong class="text-success">Total: {{$Total}}</strong> )</h3></div>
+            <div class="card-header text-center"><h3>( <strong>Hours: {{$WorkingHours}} </strong> ) ( <strong class="text-success">Pay in: ${{$Total}}</strong> )</h3></div>
         </div>
     </div>
 </div>

@@ -66,16 +66,51 @@
                 </div>
 
                 <div class="row">
+                    <label for="project_type" class="col-md-4 col-form-label text-md-end text-start"><strong>Project Type:</strong></label>
+                    <div class="col-md-6" style="line-height: 35px;">
+                        {{ $project->project_type }}
+                    </div>
+                </div>
+
+                @if($project->project_type == "Fixed")
+                <div class="row">
+                    <label for="project_type" class="col-md-4 col-form-label text-md-end text-start"><strong>Milestones:</strong></label>
+                    <div class="col-md-6" style="line-height: 35px;">
+                        <div id="milestones">
+                        @foreach (json_decode($project->milestones_rate) as $milestones_rate)
+                            <div class="input-group" data-index="{{ $milestones_rate->milestone }}">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text @if($milestones_rate->status == 'paid') bg-success text-light @elseif($milestones_rate->status == 'unpaid') bg-warning text-dark @endif">
+                                        Milestone {{ $milestones_rate->milestone }} : ${{$milestones_rate->price}} : {{$milestones_rate->status}}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        </div>
+                    </div>
+                </div>
+                @else
+                <div class="row">
+                    <label for="hourly_rate" class="col-md-4 col-form-label text-md-end text-start"><strong>Hourly Rate:</strong></label>
+                    <div class="col-md-6" style="line-height: 35px;">
+                        ${{ $project->hourly_rate }}
+                    </div>
+                </div>
+                @endif
+
+                <div class="row">
                     <label for="budget" class="col-md-4 col-form-label text-md-end text-start"><strong>Budget:</strong></label>
                     <div class="col-md-6" style="line-height: 35px;">
-                        {{ $project->budget }}
+                        ${{ $project->budget }}
                     </div>
                 </div>
 
                 <div class="row">
                     <label for="status" class="col-md-4 col-form-label text-md-end text-start"><strong>Status:</strong></label>
                     <div class="col-md-6" style="line-height: 35px;">
-                        {{ $project->status }}
+                        @if($project->status == "Open")<span class="badge rounded-pill bg-success">{{ $project->status }}</span>
+                        @elseif($project->status == "Close")<span class="badge rounded-pill bg-secondary">{{ $project->status }}</span>
+                        @elseif($project->status == "Cancel")<span class="badge rounded-pill bg-warning text-dark">{{ $project->status }}</span>@endif
                     </div>
                 </div>
         
@@ -92,35 +127,35 @@
                     <thead>
                         <tr>
                         <th scope="col">S#</th>
-                        <th scope="col">Project</th>
+                        <!-- <th scope="col">Project</th> -->
                         <th scope="col">Amount</th>
                         <th scope="col">Date</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Action</th>
+                        <!-- <th scope="col">Action</th> -->
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($billings as $billing)
                         <tr>
                             <th scope="row">{{ $loop->iteration }}</th>
-                            <td>{{ $billing->project->name }}</td>
-                            <td>{{ $billing->amount }}</td>
+                            <!-- <td>{{ $billing->project->name }}</td> -->
+                            <td>${{ $billing->amount }}</td>
                             <td>{{ $billing->date }}</td>
                             <td>{{ $billing->status }}</td>
                             <td>
                                 <form action="{{ route('billings.destroy', $billing->id) }}" method="post">
                                     @csrf
                                     @method('DELETE')
-
+                                    {{--
                                     <a href="{{ route('billings.show', $billing->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-eye"></i> Show</a>
-
                                     @can('edit-billing')
                                         <a href="{{ route('billings.edit', $billing->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                     @endcan
-
+                                    
                                     @can('delete-billing')
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Do you want to delete this billing?');"><i class="bi bi-trash"></i> Delete</button>
                                     @endcan
+                                    --}}
                                 </form>
                             </td>
                         </tr>
@@ -139,7 +174,7 @@
 
     <div class="col-md-12 mt-5">
         <div class="card">
-            <div class="card-header text-center text-success"><h2><strong>Totel Earn: {{$amountSum}}</strong></h2></div>
+            <div class="card-header text-center text-success"><h2><strong>Totel Earn: ${{$amountSum}}</strong></h2></div>
         </div>
     </div>
     @endcanany

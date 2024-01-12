@@ -28,8 +28,7 @@ class StoreReportRequest extends FormRequest
             'project_id' => 'required|integer|max:250',
             'user_id' => 'required|integer|max:250',
             'working_hours' => 'required|integer|max:250',
-            'price' => 'required|integer|max:250',
-            'total' => 'required|between:0,99999999',
+            'total' => 'required|integer|between:1,99999999',
             'date' => 'required|date',
         ];
     }

@@ -187,16 +187,14 @@ return [
 
 
     'enum_project_status' => [
-        'Planned',
-        'In progress',
-        'Completed',
-        'Cancelled'
+        'Open',
+        'Close',
+        'Cancel'
     ],
 
     'enum_billing_status' => [
         'Paid',
-        'Unpaid',
-        'Overdue'
+        'Unpaid'
     ],
 
     'enum_platform_status' => [
@@ -206,6 +204,11 @@ return [
         'WhatsApp',
         'Skype',
         'Other'
+    ],
+
+    'enum_project_type' => [
+        'Fixed',
+        'Hourly'
     ],
 
 ];

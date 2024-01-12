@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\User;
 use App\Models\Report;
+use App\Models\Project;
+use App\Models\Billing;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Requests\UpdateReportRequest;
 use Illuminate\View\View;
@@ -84,7 +86,43 @@ class ReportController extends Controller
      */
     public function store(StoreReportRequest $request)
     {
-        Report::create($request->all());
+        $client_id = $request->input('client_id');
+        $project_id = $request->input('project_id');
+        $user_id = $request->input('user_id');
+
+        // Create new report.
+        $report = Report::create($request->all());
+
+        // get Project from report project.
+        $project = Project::where('id', $project_id)->first();
+
+        if($project->project_type == 'Hourly'){
+            $billing = array(
+                'project_id' => $project_id,
+                'report_id' => $report->id,
+                'amount' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
+                'date' => $request->input('date'),
+                'status' => 'Paid',
+            );
+        }else{
+            $billing = array(
+                'project_id' => $project_id,
+                'report_id' => $report->id,
+                'amount' => $request->input('total'),
+                'date' => $request->input('date'),
+                'status' => 'Paid',
+            );
+        }
+        // create billing from report project.
+        Billing::create($billing);
+
+        // Update billing in product budget
+        $project->load('billings');
+        $project_update = $project->toArray();
+        $project_update['budget'] = $project->amount_sum;
+        $project_update['milestones_rate'] = $request->input('milestones_rate');
+        $project->update($project_update);
+        
         return redirect()->route('reports.index')
                 ->withSuccess('New Report is added successfully.');
     }
@@ -125,6 +163,48 @@ class ReportController extends Controller
      */
     public function update(UpdateReportRequest $request, Report $report)
     {
+        $client_id = $request->input('client_id');
+        $project_id = $request->input('project_id');
+        $user_id = $request->input('user_id');
+
+        // get Project from report project.
+        $project = Project::where('id', $project_id)->first();
+
+        // get billing from report project.
+        $billing_update = Billing::where('report_id', $report->id)->first();
+
+        if($project->project_type == 'Hourly'){
+            $billing = array(
+                'project_id' => $project_id,
+                'report_id' => $report->id,
+                'amount' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
+                'date' => $request->input('date'),
+                'status' => 'Paid',
+            );
+        }else{
+            $billing = array(
+                'project_id' => $project_id,
+                'report_id' => $report->id,
+                'amount' => $request->input('total'),
+                'date' => $request->input('date'),
+                'status' => 'Paid',
+            );
+        }
+
+        // create/update billing from report project.
+        if($billing_update){
+            Billing::where('report_id', $report->id)->update($billing);
+        }else{
+            Billing::create($billing);
+        }
+
+        // Update billing in product budget
+        $project->load('billings');
+        $project_update = $project->toArray();
+        $project_update['budget'] = $project->amount_sum;
+        $project_update['milestones_rate'] = $request->input('milestones_rate');
+        $project->update($project_update);
+        
         $report->update($request->all());
         return redirect()->back()
                 ->withSuccess('Report is updated successfully.');
@@ -135,6 +215,14 @@ class ReportController extends Controller
      */
     public function destroy(Report $report)
     {
+        Billing::where('report_id', $report->id)->delete();
+        
+        $project = Project::where('id', $report->project_id)->first();
+        $project->load('billings');
+        $project_update = $project->toArray();
+        $project_update['budget'] = $project->amount_sum;
+        $project->update($project_update);
+
         $report->delete();
         return redirect()->route('reports.index')
                 ->withSuccess('Report is deleted successfully.');

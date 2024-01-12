@@ -6,6 +6,8 @@ use App\Models\Scrum;
 use App\Models\Project;
 use App\Models\Client;
 use App\Models\User;
+use App\Models\Billing;
+use App\Models\Report;
 use App\Http\Requests\StoreScrumRequest;
 use App\Http\Requests\UpdateScrumRequest;
 use Illuminate\View\View;
@@ -70,7 +72,54 @@ class ScrumController extends Controller
      */
     public function store(StoreScrumRequest $request)
     {
-        Scrum::create($request->all());
+        $scrum = Scrum::create($request->all());
+
+        $client_id = $request->input('client_id');
+        $project_id = $request->input('project_id');
+        $user_id = $request->input('user_id');
+
+        $project = Project::where('id', $project_id)->first();
+        if($project->project_type == 'Hourly'){
+            // create report from scrum project
+            $report = array(
+                'client_id' => $client_id,
+                'project_id' => $project_id,
+                'user_id' => $user_id,
+                'working_hours' => $request->input('working_hours'),
+                'total' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
+                'date' =>$request->input('date'),
+            );
+            $report_return = Report::create($report);
+
+            // create billing from scrum project.
+            $billing = array(
+                'project_id' => $project_id,
+                'scrum_id' => $scrum->id,
+                'report_id' => $report_return->id,
+                'amount' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
+                'date' => $request->input('date'),
+                'status' => 'Paid',
+            );
+            Billing::create($billing);
+
+            // Update billing in product budget
+            $project->load('billings');
+            $project_update = $project->toArray();
+            $project_update['budget'] = $project->amount_sum;
+            $project->update($project_update);
+        }else{
+            // create report from scrum project
+            $report = array(
+                'client_id' => $client_id,
+                'project_id' => $project_id,
+                'user_id' => $user_id,
+                'working_hours' => $request->input('working_hours'),
+                'total' => 0,
+                'date' =>$request->input('date'),
+            );
+            $report_return = Report::create($report);
+        }
+        
         return redirect()->route('scrums.index')
                 ->withSuccess('New Scrum is added successfully.');
     }
@@ -111,6 +160,42 @@ class ScrumController extends Controller
      */
     public function update(UpdateScrumRequest $request, Scrum $scrum)
     {
+        $client_id = $request->input('client_id');
+        $project_id = $request->input('project_id');
+        $user_id = $request->input('user_id');
+
+        $project = Project::where('id', $project_id)->first();
+        if($project->project_type == 'Hourly'){
+            // Update report from scrum project
+            $billing_update = Billing::where('scrum_id', $scrum->id)->first();
+            $report = array(
+                'client_id' => $client_id,
+                'project_id' => $project_id,
+                'user_id' => $user_id,
+                'working_hours' => $request->input('working_hours'),
+                'total' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
+                'date' =>$request->input('date'),
+            );
+            Report::where('id', $billing_update->report_id)->update($report);
+
+            // update billing from scrum project.
+            $billing = array(
+                'project_id' => $project_id,
+                'scrum_id' => $scrum->id,
+                'amount' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
+                'date' => $request->input('date'),
+                'status' => 'Paid',
+            );
+            Billing::where('scrum_id', $scrum->id)->update($billing);
+
+            // Update billing in product budget
+            $project->load('billings');
+            $project_update = $project->toArray();
+            $project_update['budget'] = $project->amount_sum;
+            $project->update($project_update);
+        }
+
+
         $scrum->update($request->all());
         return redirect()->back()
                 ->withSuccess('Scrum is updated successfully.');
@@ -121,6 +206,18 @@ class ScrumController extends Controller
      */
     public function destroy(Scrum $scrum)
     {
+        $billing_update = Billing::where('scrum_id', $scrum->id)->first();
+        if($billing_update){
+            Billing::where('scrum_id', $scrum->id)->delete();
+            Report::where('id', $billing_update->report_id)->delete();
+        }
+
+        $project = Project::where('id', $scrum->project_id)->first();
+        $project->load('billings');
+        $project_update = $project->toArray();
+        $project_update['budget'] = $project->amount_sum;
+        $project->update($project_update);
+
         $scrum->delete();
         return redirect()->route('scrums.index')
                 ->withSuccess('Scrum is deleted successfully.');

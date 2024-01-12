@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('billings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('project_id');
+            $table->unsignedBigInteger('scrum_id')->nullable();
+            $table->unsignedBigInteger('report_id')->nullable();
             $table->double('amount', 8, 2);
             $table->date('date');
-            $table->enum('status', ['Unpaid', 'Paid', 'Overdue']);
+            $table->enum('status', ['Paid', 'Unpaid']);
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');

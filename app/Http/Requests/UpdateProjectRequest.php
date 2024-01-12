@@ -28,16 +28,21 @@ class UpdateProjectRequest extends FormRequest
             'name' => 'required|string|max:250',
             'description' => 'string',
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'budget' => 'required|between:0,99999999',
+            'project_type' => [
+                'required',
+                'string',
+                Rule::in([
+                    Project::STATUS_FIXED,
+                    Project::STATUS_HOURLY,
+                ]),
+            ],
             'status' => [
                 'required',
                 'string',
                 Rule::in([
-                    Project::STATUS_PLANNED,
-                    Project::STATUS_IN_PROGRESS,
-                    Project::STATUS_COMPLETED,
-                    Project::STATUS_CANCELLED,
+                    Project::STATUS_OPEN,
+                    Project::STATUS_CLOSE,
+                    Project::STATUS_CANCEL,
                 ]),
             ],
         ];

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('user_id');
             $table->integer('working_hours');
-            $table->integer('price');
             $table->double('total', 8, 2);
             $table->date('date');
             $table->timestamps();

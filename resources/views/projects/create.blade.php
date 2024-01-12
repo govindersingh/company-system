@@ -66,7 +66,7 @@
                     <div class="mb-3 row">
                         <label for="end_date" class="col-md-4 col-form-label text-md-end text-start">End Date</label>
                         <div class="col-md-6">
-                          <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ $matchDate ? $matchDate->format('Y-m-d') : '' }}">
+                          <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date">
                             @if ($errors->has('end_date'))
                                 <span class="text-danger">{{ $errors->first('end_date') }}</span>
                             @endif
@@ -74,11 +74,51 @@
                     </div>
 
                     <div class="mb-3 row">
-                        <label for="budget" class="col-md-4 col-form-label text-md-end text-start">Budget</label>
+                        <label for="project_type" class="col-md-4 col-form-label text-md-end text-start">Project Type</label>
                         <div class="col-md-6">
-                          <input type="number" min="0" class="form-control @error('budget') is-invalid @enderror" id="budget" name="budget" value="{{ old('budget') }}">
-                            @if ($errors->has('budget'))
-                                <span class="text-danger">{{ $errors->first('budget') }}</span>
+                            <select class="form-control @error('project_type') is-invalid @enderror" id="project_type" name="project_type" value="{{ old('project_type') }}">
+                                @foreach (Config::get('app.enum_project_type') as $project_type)
+                                <option value="{{$project_type}}">{{ $project_type }}</option>
+                                @endforeach 
+                            </select>
+                            @if ($errors->has('project_type'))
+                                <span class="text-danger">{{ $errors->first('project_type') }}</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row" id="milestone_element">
+                        <label for="milestones_rate" class="col-md-4 col-form-label text-md-end text-start">Milestones Rate</label>
+                        <div class="col-md-6">
+                            <div id="milestones">
+                                <div class="input-group" data-index="1">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">Milestone 1</div>
+                                    </div>
+                                    <input type="number" min="0" class="form-control milestones_data @error('milestones_data') is-invalid @enderror" name="milestones_data[1]" placeholder="Price in number">
+                                </div>
+                            </div>
+                            <a href="javascript:void(0);" onClick="addMilestone();" class="btn btn-primary btn-sm mt-3 mx-auto">Add Milestone +</a>
+                            <input type="hidden" class="form-control @error('milestones_rate') is-invalid @enderror" name="milestones_rate" id="milestonesDataInput">
+                            
+                            @if ($errors->has('milestones_rate'))
+                                <span class="text-danger">{{ $errors->first('milestones_rate') }}</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row" id="hourly_element" style="display:none;">
+                        <label for="hourly_rate" class="col-md-4 col-form-label text-md-end text-start">Hourly Rate</label>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">$</div>
+                                </div>
+                                <input type="number" min="0" class="form-control @error('hourly_rate') is-invalid @enderror" id="hourly_rate" name="hourly_rate" value="{{ old('hourly_rate') }}">
+                            </div>
+                            
+                            @if ($errors->has('hourly_rate'))
+                                <span class="text-danger">{{ $errors->first('hourly_rate') }}</span>
                             @endif
                         </div>
                     </div>
@@ -97,6 +137,7 @@
                         </div>
                     </div>
                     
+                    <input type="hidden" min="0" class="form-control" id="hourly_rate" name="budget" value="0">
                     <div class="mb-3 row">
                         <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add Project">
                     </div>
@@ -112,5 +153,48 @@
         .catch( error => {
             console.error( error );
         } );
+
+    document.getElementById("project_type").addEventListener("change",function(event){
+        if(event.target.value == "Fixed"){
+            document.getElementById("milestone_element").style.display = "flex";
+            document.getElementById("hourly_element").style.display = "none";
+        }else if(event.target.value == "Hourly"){
+            document.getElementById("milestone_element").style.display = "none";
+            document.getElementById("hourly_element").style.display = "flex";
+        }
+    })
+
+    function addMilestone(){
+        let milestones_elements = document.querySelectorAll("#milestones [data-index]");
+
+        let newElement = document.createElement('div');
+        newElement.className = "input-group my-1";
+        newElement.setAttribute('data-index', milestones_elements.length + 1);
+        
+        newElement.innerHTML = `
+        <div class="input-group-prepend">
+            <div class="input-group-text">Milestone ${milestones_elements.length + 1}</div>
+        </div>
+        <input type="number" min="0" class="form-control milestones_data @error('milestones_data') is-invalid @enderror" name="milestones_data[${milestones_elements.length + 1}]" placeholder="Price in number">
+        <a href="javascript:void(0);" class="btn btn-danger" onClick="removeMilestone(${milestones_elements.length + 1});">Remove</a>
+        `;
+
+        document.getElementById("milestones").appendChild(newElement);
+    }
+
+    function removeMilestone(index){
+        let remove_elements = document.querySelector(`#milestones [data-index="${index}"]`);
+        remove_elements.remove();
+    }
+
+    document.addEventListener("keyup", function(event){
+        let milestonesData = [];
+        document.querySelectorAll('.milestones_data').forEach(function(input) {
+            var price = input.value;
+            var index = input.parentNode.getAttribute("data-index");
+            milestonesData.push({milestone: index, price: price, status: 'unpaid'});
+            document.getElementById('milestonesDataInput').value = JSON.stringify(milestonesData);
+        });
+    });
 </script>
 @endsection

@@ -16,6 +16,7 @@
                 <!-- <th scope="col">Description</th> -->
                 <th scope="col">Start Date</th>
                 <th scope="col">End Date</th>
+                <th scope="col">Project Type</th>
                 <th scope="col">Budget</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
@@ -30,8 +31,14 @@
                     <!-- <td>{{ $project->description }}</td> -->
                     <td>{{ $project->start_date }}</td>
                     <td>{{ $project->end_date }}</td>
+                    <td>{{ $project->project_type }}</td>
                     <td>{{ $project->budget }}</td>
-                    <td>{{ $project->status }}</td>
+                    <td>
+                        @if($project->status == "Open")<span class="badge rounded-pill bg-success">{{ $project->status }}</span>
+                        @elseif($project->status == "Close")<span class="badge rounded-pill bg-secondary">{{ $project->status }}</span>
+                        @elseif($project->status == "Cancel")<span class="badge rounded-pill bg-warning text-dark">{{ $project->status }}</span>@endif
+                        
+                    </td>
                     <td>
                         <form action="{{ route('projects.destroy', $project->id) }}" method="post">
                             @csrf

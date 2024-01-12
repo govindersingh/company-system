@@ -14,7 +14,6 @@ class Report extends Model
         'project_id',
         'user_id',
         'working_hours',
-        'price',
         'total',
         'date',
     ];

@@ -69,24 +69,51 @@
                     </div>
 
                     <div class="mb-3 row">
-                        <label for="price" class="col-md-4 col-form-label text-md-end text-start">Price</label>
+                        <label for="project_type" class="col-md-4 col-form-label text-md-end text-start">Project Type</label>
                         <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text" id="basic-addon1">$</span>
-                                <input type="number" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ $report->price }}">
-                            </div>
-                                @if ($errors->has('price'))
-                                <span class="text-danger">{{ $errors->first('price') }}</span>
-                            @endif
+                            <input type="text" class="form-control" id="project_type" value="{{ $report->project->project_type }}" disabled>
                         </div>
                     </div>
+
+                    @if($report->project->project_type == "Fixed")
+                    <div class="mb-3 row" id="custom_element">
+                        <label for="milestones_rate" class="col-md-4 col-form-label text-md-end text-start">Milestones Rate</label>
+                        <div class="col-md-6">
+                            <div id="milestones">
+                                @foreach (json_decode($report->project->milestones_rate) as $milestones_rate)
+                                <div class="input-group @if($milestones_rate->milestone != '1') my-1 @endif">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text input_{{ $milestones_rate->milestone }} @if($milestones_rate->status == 'paid') bg-success text-light @elseif($milestones_rate->status == 'unpaid') bg-warning text-dark @endif">Milestone {{ $milestones_rate->milestone }}</div>
+                                    </div>
+                                    <input type="number" min="0" class="form-control milestones_data @error('milestones_data') is-invalid @enderror" name="milestones_data[{{ $milestones_rate->milestone }}]" placeholder="Price in number" value="{{ $milestones_rate->price }}" data-index="{{ $milestones_rate->milestone }}" data-status="{{ $milestones_rate->status }}" disabled>
+                                    @if($milestones_rate->status == "unpaid")
+                                    <a href="javascript:void(0);" class="btn btn-secondary" onClick="paidMilestone('{{ $milestones_rate->milestone }}', '{{ $milestones_rate->price }}', '{{ $milestones_rate->status }}');">Paid</a>
+                                    @endif
+                                </div>
+                                @endforeach
+                            </div>
+                            <input type="hidden" class="form-control @error('milestones_rate') is-invalid @enderror" name="milestones_rate" id="milestonesDataInput" value="{{ $report->project->milestones_rate }}">
+                        </div>
+                    </div>
+                    @else
+                    <div class="mb-3 row" id="custom_element">
+                        <label for="hourly_rate" class="col-md-4 col-form-label text-md-end text-start">Hourly Rate</label>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="text" class="form-control" id="hourly_rate" value="{{ $report->project->hourly_rate }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
                     <div class="mb-3 row">
                         <label for="total" class="col-md-4 col-form-label text-md-end text-start">Total</label>
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text" id="basic-addon1">$</span>
-                                <input type="number" class="form-control @error('total') is-invalid @enderror" id="total" name="total" value="{{ $report->total }}">
+                                <input type="number" class="form-control @error('total') is-invalid @enderror" id="total" value="{{ $report->total }}" disabled>
+                                <input type="hidden" class="form-control " id="total_real" name="total" value="{{ $report->total }}">
                             </div>
                                 @if ($errors->has('total'))
                                 <span class="text-danger">{{ $errors->first('total') }}</span>
@@ -122,30 +149,43 @@
 
         document.getElementById('working_hours').addEventListener('change', function() {
             var working_hours = this.value;
-            var price = document.getElementById('price').value;
+            var element = document.getElementById('project_id');
+            var project_type = element.options[element.selectedIndex].getAttribute('data-project_type');
 
-            if(working_hours && working_hours > 0 && price && price > 0){
-                document.getElementById('total').value = working_hours * price;
-            }else if(price && price > 0){
-                document.getElementById('total').value = price;
-            }else{
-                document.getElementById('total').value = 0;
-            }
-        });
-
-        document.getElementById('price').addEventListener('change', function() {
-            var price = this.value;
-            var working_hours = document.getElementById('working_hours').value;
-
-            if(working_hours && working_hours > 0 && price && price > 0){
-                document.getElementById('total').value = working_hours * price;
-            }else if(price && price > 0){
-                document.getElementById('total').value = price;
-            }else{
-                document.getElementById('total').value = 0;
+            if(project_type == 'Hourly'){
+                var hourly_rate = element.options[element.selectedIndex].getAttribute('data-hourly_rate');
+                if(working_hours && working_hours > 0){
+                    document.getElementById('total').value = (parseInt(working_hours) * parseFloat(hourly_rate)).toFixed(2);
+                    document.getElementById('total_real').value = (parseInt(working_hours) * parseFloat(hourly_rate)).toFixed(2);
+                }
             }
         });
     });
+
+    function paidMilestone(milestone_index, milestone_price, milestone_status){
+        let milestonesData = [];
+        document.querySelectorAll('.milestones_data').forEach(function(input) {
+            var price = input.value;
+            var index = input.getAttribute("data-index");
+            var status = input.getAttribute("data-status");
+
+            milestonesData.push({milestone: index, price: price, status: (milestone_index == index) ? 'paid' : 'unpaid'});
+            document.getElementById('milestonesDataInput').value = JSON.stringify(milestonesData);
+
+            if(status == 'paid'){
+                document.querySelector(`.input_${index}`).classList.add('bg-success', 'text-light');
+                document.querySelector(`.input_${index}`).classList.remove('bg-warning', 'text-dark');
+            }else if(milestone_index == index){
+                document.querySelector(`.input_${index}`).classList.add('bg-success', 'text-light');
+                document.querySelector(`.input_${index}`).classList.remove('bg-warning', 'text-dark');
+            }else{
+                document.querySelector(`.input_${index}`).classList.remove('bg-success', 'text-light');
+                document.querySelector(`.input_${index}`).classList.add('bg-warning', 'text-dark');
+            }
+        });
+        document.getElementById('total').value = milestone_price;
+        document.getElementById('total_real').value = milestone_price;
+    }
 
     var projectIdToSelect = '{{$report->project_id}}';
 
@@ -161,6 +201,13 @@
                     var option = document.createElement('option');
                     option.value = project.id;
                     option.text = project.name;
+
+                    if(project.project_type){
+                        option.setAttribute('data-project_type', project.project_type);
+                    }
+                    if(project.hourly_rate){
+                        option.setAttribute('data-hourly_rate', project.hourly_rate);
+                    }
                     
                     // Set 'selected' property if projectId matches
                     if (project.id == parseInt(projectIdToSelect)) {

@@ -15,6 +15,8 @@ class Billing extends Model
 
     protected $fillable = [
         'project_id',
+        'scrum_id',
+        'report_id',
         'amount',
         'date',
         'status'

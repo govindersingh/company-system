@@ -9,10 +9,12 @@ class Project extends Model
 {
     use HasFactory;
 
-    public const STATUS_PLANNED = 'Planned';
-    public const STATUS_IN_PROGRESS = 'In progress';
-    public const STATUS_COMPLETED = 'Completed';
-    public const STATUS_CANCELLED = 'Cancelled';
+    public const STATUS_FIXED = 'Fixed';
+    public const STATUS_HOURLY = 'Hourly';
+
+    public const STATUS_OPEN = 'Open';
+    public const STATUS_CLOSE = 'Close';
+    public const STATUS_CANCEL = 'Cancel';
 
     protected $fillable = [
         'client_id',
@@ -20,9 +22,15 @@ class Project extends Model
         'description',
         'start_date',
         'end_date',
+        'project_type',
+        'milestones_rate',
+        'hourly_rate',
         'budget',
-        'status',
-        'details'
+        'status'
+    ];
+
+    protected $casts = [
+        'milestones_rate' => 'json',
     ];
 
     public function client()

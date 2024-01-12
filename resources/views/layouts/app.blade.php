@@ -7,7 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>C.S.</title>
+    <title>Company System</title>
+    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -16,13 +17,14 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+    <link href="{{ asset('custom/custom.css') }}" rel="stylesheet" />
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Company System
+                <img src="{{asset('images/header-logo.png') }}" alt="logo"  width="200" height="50" />
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -40,51 +42,53 @@
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    <a class="nav-link text-dark" href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
                             @endif
 
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link text-dark" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
                             @canany(['show-client', 'create-client', 'edit-client', 'delete-client'])
-                                <li><a class="nav-link" href="{{ route('clients.index') }}">Clients</a></li>
+                                <li><a class="nav-link text-dark" href="{{ route('clients.index') }}">Clients</a></li>
                             @endcanany
 
                             @canany(['show-project', 'create-project', 'edit-project', 'delete-project'])
-                                <li><a class="nav-link" href="{{ route('projects.index') }}">Projects</a></li>
+                                <li><a class="nav-link text-dark" href="{{ route('projects.index') }}">Projects</a></li>
                             @endcanany
 
+                            {{--
                             @canany(['show-billing', 'create-billing', 'edit-billing', 'delete-billing'])
-                                <li><a class="nav-link" href="{{ route('billings.index') }}">Billings</a></li>
+                                <li><a class="nav-link text-dark" href="{{ route('billings.index') }}">Billings</a></li>
                             @endcanany
+                            --}}
 
                             @canany(['show-scrum', 'create-scrum', 'edit-scrum', 'delete-scrum'])
-                                <li><a class="nav-link" href="{{ route('scrums.index') }}">Scrum</a></li>
+                                <li><a class="nav-link text-dark" href="{{ route('scrums.index') }}">Scrum</a></li>
                             @endcanany
 
                             @canany(['show-report', 'create-report', 'edit-report', 'delete-report'])
-                                <li><a class="nav-link" href="{{ route('reports.index') }}">Report</a></li>
+                                <li><a class="nav-link text-dark" href="{{ route('reports.index') }}">Report</a></li>
                             @endcanany
 
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     @canany(['show-user', 'create-user', 'edit-user', 'delete-user'])
-                                        <a class="dropdown-item" href="{{ route('users.index') }}">Manage Users</a>
+                                        <a class="dropdown-item text-dark" href="{{ route('users.index') }}">Manage Users</a>
                                     @endcanany
 
                                     @canany(['show-role', 'create-role', 'edit-role', 'delete-role'])
-                                        <a class="dropdown-item" href="{{ route('roles.index') }}">Manage Roles</a>
+                                        <a class="dropdown-item text-dark" href="{{ route('roles.index') }}">Manage Roles</a>
                                     @endcanany
 
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                    <a class="dropdown-item text-dark" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
