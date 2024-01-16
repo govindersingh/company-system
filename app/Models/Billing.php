@@ -17,6 +17,7 @@ class Billing extends Model
         'project_id',
         'scrum_id',
         'report_id',
+        'milestone',
         'amount',
         'date',
         'status'

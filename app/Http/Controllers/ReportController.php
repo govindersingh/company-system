@@ -89,7 +89,7 @@ class ReportController extends Controller
         $client_id = $request->input('client_id');
         $project_id = $request->input('project_id');
         $user_id = $request->input('user_id');
-
+// dd($request->all());
         // Create new report.
         $report = Report::create($request->all());
 
@@ -108,6 +108,7 @@ class ReportController extends Controller
             $billing = array(
                 'project_id' => $project_id,
                 'report_id' => $report->id,
+                'milestone' => $request->input('milestone_number'),
                 'amount' => $request->input('total'),
                 'date' => $request->input('date'),
                 'status' => 'Paid',
@@ -215,12 +216,29 @@ class ReportController extends Controller
      */
     public function destroy(Report $report)
     {
+        $project = Project::where('id', $report->project_id)->first();
+        $milestone = [];
+        if($project->project_type == 'Fixed'){
+            $billing = Billing::where('report_id', $report->id)->first();
+            foreach (json_decode($project->milestones_rate, true) as $key => $value) {
+                if($value['milestone'] == (int)$billing->milestone){
+                    $milestoneData = array(
+                        'milestone' => $value['milestone'],
+                        'price' => $value['price'],
+                        'status' => 'unpaid',
+                    );
+                    $milestone[] = $milestoneData;
+                }else{
+                    $milestone[] = $value;
+                }
+            }
+        }
         Billing::where('report_id', $report->id)->delete();
         
-        $project = Project::where('id', $report->project_id)->first();
         $project->load('billings');
         $project_update = $project->toArray();
         $project_update['budget'] = $project->amount_sum;
+        $project_update['milestones_rate'] = json_encode($milestone);
         $project->update($project_update);
 
         $report->delete();

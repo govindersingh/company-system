@@ -85,6 +85,7 @@
                                 <span class="input-group-text" id="basic-addon2">$</span>
                                 <input type="number" class="form-control @error('total') is-invalid @enderror" id="total" value="0" disabled>
                                 <input type="hidden" min="0" class="form-control " id="total_real" name="total" value="0">
+                                <input type="hidden" min="0" class="form-control " id="milestone_number" name="milestone_number">
                             </div>
                             @if ($errors->has('total'))
                                 <span class="text-danger">{{ $errors->first('total') }}</span>
@@ -166,7 +167,8 @@
             }
         });
         document.getElementById('milestonesDataInput').value = JSON.stringify(milestonesData);
-        console.log(milestonesData);
+        document.getElementById('milestone_number').value = milestone_index;
+        console.log(milestone_index, milestonesData);
         document.getElementById('total').value = milestone_price;
         document.getElementById('total_real').value = milestone_price;
     }
@@ -220,18 +222,24 @@
         document.getElementById("project_type").value = project.project_type;
 
         if(project.project_type == "Fixed"){
+            let is_step = false;
             let types = JSON.parse(project.milestones_rate);
             fixed_html = `<label for="milestones_rate" class="col-md-4 col-form-label text-md-end text-start">Milestones Rate</label>
             <div class="col-md-6">
                 <div id="milestones">
                     ${types.map(milestones_rate => {
-                        return `<div class="input-group ${(milestones_rate.milestone != 1) ? 'my-1' : ''}">
+                        var context =  `<div class="input-group ${(milestones_rate.milestone != 1) ? 'my-1' : ''}">
                             <div class="input-group-prepend">
                                 <div class="input-group-text input_${milestones_rate.milestone} ${(milestones_rate.status == 'paid') ? 'bg-success text-light' : 'bg-warning text-dark'}">Milestone ${milestones_rate.milestone}</div>
                             </div>
                             <input type="number" min="0" class="form-control milestones_data" name="milestones_data[${milestones_rate.milestone}]" placeholder="Price in number" value="${milestones_rate.price}" data-index="${milestones_rate.milestone}" data-status="${milestones_rate.status}" disabled>
-                            ${(milestones_rate.status == "unpaid") ? `<a href="javascript:void(0);" class="btn btn-secondary" onClick="paidMilestone('${milestones_rate.milestone}', '${milestones_rate.price}', '${milestones_rate.status}');">Paid</a>` : ''}
+                            ${(milestones_rate.status == "unpaid" && is_step == false) ? `<a href="javascript:void(0);" class="btn btn-secondary" onClick="paidMilestone('${milestones_rate.milestone}', '${milestones_rate.price}', '${milestones_rate.status}');">Paid</a>` : ''}
                         </div>`;
+
+                        if (milestones_rate.status == "unpaid" && is_step == false) {
+                            is_step = true;
+                        }
+                        return context;
                     }).join('')}
                 </div>
                 <input type="hidden" class="form-control" name="milestones_rate" id="milestonesDataInput" value="${project.milestones_rate}">

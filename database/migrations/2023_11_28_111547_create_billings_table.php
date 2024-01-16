@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('scrum_id')->nullable();
             $table->unsignedBigInteger('report_id')->nullable();
+            $table->integer('milestone')->nullable();
             $table->double('amount', 8, 2);
             $table->date('date');
             $table->enum('status', ['Paid', 'Unpaid']);

@@ -80,16 +80,20 @@
                         <label for="milestones_rate" class="col-md-4 col-form-label text-md-end text-start">Milestones Rate</label>
                         <div class="col-md-6">
                             <div id="milestones">
+                                @php($is_step = false)
                                 @foreach (json_decode($report->project->milestones_rate) as $milestones_rate)
                                 <div class="input-group @if($milestones_rate->milestone != '1') my-1 @endif">
                                     <div class="input-group-prepend">
                                         <div class="input-group-text input_{{ $milestones_rate->milestone }} @if($milestones_rate->status == 'paid') bg-success text-light @elseif($milestones_rate->status == 'unpaid') bg-warning text-dark @endif">Milestone {{ $milestones_rate->milestone }}</div>
                                     </div>
                                     <input type="number" min="0" class="form-control milestones_data @error('milestones_data') is-invalid @enderror" name="milestones_data[{{ $milestones_rate->milestone }}]" placeholder="Price in number" value="{{ $milestones_rate->price }}" data-index="{{ $milestones_rate->milestone }}" data-status="{{ $milestones_rate->status }}" disabled>
-                                    @if($milestones_rate->status == "unpaid")
+                                    @if($milestones_rate->status == "unpaid" && $report->total == 0 && $is_step == false)
                                     <a href="javascript:void(0);" class="btn btn-secondary" onClick="paidMilestone('{{ $milestones_rate->milestone }}', '{{ $milestones_rate->price }}', '{{ $milestones_rate->status }}');">Paid</a>
                                     @endif
                                 </div>
+                                @if($milestones_rate->status == "unpaid" && $is_step == false)
+                                @php($is_step = true)
+                                @endif
                                 @endforeach
                             </div>
                             <input type="hidden" class="form-control @error('milestones_rate') is-invalid @enderror" name="milestones_rate" id="milestonesDataInput" value="{{ $report->project->milestones_rate }}">
