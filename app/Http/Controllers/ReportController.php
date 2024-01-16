@@ -89,7 +89,7 @@ class ReportController extends Controller
         $client_id = $request->input('client_id');
         $project_id = $request->input('project_id');
         $user_id = $request->input('user_id');
-// dd($request->all());
+
         // Create new report.
         $report = Report::create($request->all());
 
@@ -218,10 +218,10 @@ class ReportController extends Controller
     {
         $project = Project::where('id', $report->project_id)->first();
         $milestone = [];
-        if($project->project_type == 'Fixed'){
-            $billing = Billing::where('report_id', $report->id)->first();
+        $billing = Billing::where('report_id', $report->id)->first();
+        if($project && $project->project_type == 'Fixed'){
             foreach (json_decode($project->milestones_rate, true) as $key => $value) {
-                if($value['milestone'] == (int)$billing->milestone){
+                if($billing && $value['milestone'] == (int)$billing->milestone){
                     $milestoneData = array(
                         'milestone' => $value['milestone'],
                         'price' => $value['price'],
@@ -233,13 +233,17 @@ class ReportController extends Controller
                 }
             }
         }
-        Billing::where('report_id', $report->id)->delete();
-        
-        $project->load('billings');
-        $project_update = $project->toArray();
-        $project_update['budget'] = $project->amount_sum;
-        $project_update['milestones_rate'] = json_encode($milestone);
-        $project->update($project_update);
+        if($billing){
+            Billing::where('report_id', $report->id)->delete();
+        }
+
+        if($project){
+            $project->load('billings');
+            $project_update = $project->toArray();
+            $project_update['budget'] = $project->amount_sum;
+            $project_update['milestones_rate'] = json_encode($milestone);
+            $project->update($project_update);
+        }
 
         $report->delete();
         return redirect()->route('reports.index')

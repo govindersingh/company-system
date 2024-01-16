@@ -117,7 +117,8 @@
                             <div class="input-group">
                                 <span class="input-group-text" id="basic-addon1">$</span>
                                 <input type="number" class="form-control @error('total') is-invalid @enderror" id="total" value="{{ $report->total }}" disabled>
-                                <input type="hidden" class="form-control " id="total_real" name="total" value="{{ $report->total }}">
+                                <input type="hidden" class="form-control " id="total_real" name="total" value="{{ $report->total }}" style="display:none;">
+                                <input type="number" min="0" class="form-control " id="milestone_number" name="milestone_number" style="display:none;">
                             </div>
                                 @if ($errors->has('total'))
                                 <span class="text-danger">{{ $errors->first('total') }}</span>
@@ -159,8 +160,8 @@
             if(project_type == 'Hourly'){
                 var hourly_rate = element.options[element.selectedIndex].getAttribute('data-hourly_rate');
                 if(working_hours && working_hours > 0){
-                    document.getElementById('total').value = (parseInt(working_hours) * parseFloat(hourly_rate)).toFixed(2);
-                    document.getElementById('total_real').value = (parseInt(working_hours) * parseFloat(hourly_rate)).toFixed(2);
+                    document.getElementById('total').value = (parseInt(working_hours) * parseFloat(hourly_rate)).toFixed(0);
+                    document.getElementById('total_real').value = (parseInt(working_hours) * parseFloat(hourly_rate)).toFixed(0);
                 }
             }
         });
@@ -191,8 +192,10 @@
             }
         });
         document.getElementById('milestonesDataInput').value = JSON.stringify(milestonesData);
+        document.getElementById('milestone_number').value = milestone_index;
         document.getElementById('total').value = milestone_price;
         document.getElementById('total_real').value = milestone_price;
+        console.log(milestone_price);
     }
 
     var projectIdToSelect = '{{$report->project_id}}';

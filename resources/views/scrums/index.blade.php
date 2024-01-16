@@ -24,7 +24,7 @@
                 <tr>
                     <th scope="row">{{ $loop->iteration }}</th>
                     <td>{{ $scrum->client->name }}</td>
-                    <td>{{ $scrum->project->name }}</td>
+                    <td>{{ isset($scrum->project->name) ? $scrum->project->name : '' }}</td>
                     <td>{{ $scrum->user->name }}</td>
                     <td>{{ $scrum->working_hours }}</td>
                     <td>{{ $scrum->date }}</td>

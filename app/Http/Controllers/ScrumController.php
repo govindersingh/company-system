@@ -176,17 +176,27 @@ class ScrumController extends Controller
                 'total' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
                 'date' =>$request->input('date'),
             );
-            Report::where('id', $billing_update->report_id)->update($report);
+            $reporter = null;
+            if(isset($billing_update->report_id)){
+                Report::where('id', $billing_update->report_id)->update($report);
+            }else{
+                $reporter = Report::create($report);
+            }
 
             // update billing from scrum project.
             $billing = array(
                 'project_id' => $project_id,
                 'scrum_id' => $scrum->id,
+                'report_id' => isset($billing_update->report_id) ? $billing_update->report_id : $reporter->id,
                 'amount' => number_format((float)$request->input('working_hours'), 2, '.', '') * number_format((float)$project->hourly_rate, 2, '.', ''),
                 'date' => $request->input('date'),
                 'status' => 'Paid',
             );
-            Billing::where('scrum_id', $scrum->id)->update($billing);
+            if(isset($billing_update)){
+                Billing::where('scrum_id', $scrum->id)->update($billing);
+            }else{
+                Billing::create($billing);
+            }
 
             // Update billing in product budget
             $project->load('billings');
@@ -206,17 +216,36 @@ class ScrumController extends Controller
      */
     public function destroy(Scrum $scrum)
     {
+        $project = Project::where('id', $scrum->project_id)->first();
+        $milestone = [];
         $billing_update = Billing::where('scrum_id', $scrum->id)->first();
+        if($project && $project->project_type == 'Fixed'){
+            foreach (json_decode($project->milestones_rate, true) as $key => $value) {
+                if($billing_update && $value['milestone'] == (int)$billing_update->milestone){
+                    $milestoneData = array(
+                        'milestone' => $value['milestone'],
+                        'price' => $value['price'],
+                        'status' => 'unpaid',
+                    );
+                    $milestone[] = $milestoneData;
+                }else{
+                    $milestone[] = $value;
+                }
+            }
+        }
         if($billing_update){
             Billing::where('scrum_id', $scrum->id)->delete();
             Report::where('id', $billing_update->report_id)->delete();
         }
-
-        $project = Project::where('id', $scrum->project_id)->first();
-        $project->load('billings');
-        $project_update = $project->toArray();
-        $project_update['budget'] = $project->amount_sum;
-        $project->update($project_update);
+        
+        
+        if($project){
+            $project->load('billings');
+            $project_update = $project->toArray();
+            $project_update['budget'] = $project->amount_sum;
+            $project_update['milestones_rate'] = json_encode($milestone);
+            $project->update($project_update);
+        }
 
         $scrum->delete();
         return redirect()->route('scrums.index')
