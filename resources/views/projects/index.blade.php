@@ -57,7 +57,7 @@
                     </td>
                 </tr>
                 @empty
-                    <td colspan="8">
+                    <td colspan="9">
                         <span class="text-danger">
                             <strong>No project Found!</strong>
                         </span>
