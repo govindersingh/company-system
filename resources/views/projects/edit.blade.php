@@ -77,7 +77,7 @@
                     <div class="mb-3 row">
                         <label for="project_type" class="col-md-4 col-form-label text-md-end text-start">Project Type</label>
                         <div class="col-md-6">
-                            <select class="form-control @error('project_type') is-invalid @enderror" id="project_type" name="project_type" value="{{ $project->project_type }}">
+                            <select class="js-example-basic-single form-control @error('project_type') is-invalid @enderror" id="project_type" name="project_type" value="{{ $project->project_type }}">
                                 @foreach (Config::get('app.enum_project_type') as $project_type)
                                 <option value="{{$project_type}}" @if($project_type == $project->project_type) {{ "selected" }} @endif>{{ $project_type }}</option>
                                 @endforeach 
@@ -150,6 +150,11 @@
         </div>
     </div>    
 </div>
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+    });
+</script>
 <script>
     ClassicEditor
         .create( document.querySelector( '#description' ) )
