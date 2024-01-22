@@ -22,7 +22,7 @@
                     <div class="mb-3 row">
                         <label for="client_id" class="col-md-4 col-form-label text-md-end text-start">Client Name</label>
                         <div class="col-md-6">
-                            <select class="js-example-basic-single form-control @error('client_id') is-invalid @enderror" id="client_id" name="client_id">
+                            <select class="form-control @error('client_id') is-invalid @enderror" id="client_id" name="client_id">
                                 @foreach ($clients as $client)
                                 <option value="{{$client->id}}" @if($client->id ==  $report->client_id) {{'selected'}} @endif>{{ $client->name }}</option>
                                 @endforeach 
