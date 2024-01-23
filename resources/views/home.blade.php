@@ -59,6 +59,12 @@
                         </a>
                     @endcanany
 
+                    @canany(['show-report', 'create-report', 'edit-report', 'delete-report'])
+                        <a class="btn btn-secondary" href="{{ route('reports.export') }}">
+                            <i class="bi bi-arrow-bar-down"></i> Report Export
+                        </a>
+                    @endcanany
+
                     <p>&nbsp;</p>
                 </div>
             </div>

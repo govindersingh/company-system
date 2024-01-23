@@ -35,6 +35,9 @@ Route::get('/scrums/getprojectsbyclientid/{client}', [ScrumController::class, 'g
 Route::get('/tools/csv_to_json', function(){ return view('tools.csv_to_json'); })->name('tools.csv_to_json');
 Route::post('/tools/csv_to_json_process', [ToolController::class, 'csvToJson'])->name('tools.csv_to_json_process');
 
+Route::get('/reports/export', function(){ return view('reports.export'); })->name('reports.export');
+Route::post('/reports/export', [ReportController::class, 'exportReport'])->name('reports.exportout');
+
 Route::resources([
     'roles' => RoleController::class,
     'users' => UserController::class,

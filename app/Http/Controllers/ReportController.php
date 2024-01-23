@@ -12,6 +12,9 @@ use App\Http\Requests\UpdateReportRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Exports\ExportReport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -248,5 +251,41 @@ class ReportController extends Controller
         $report->delete();
         return redirect()->route('reports.index')
                 ->withSuccess('Report is deleted successfully.');
+    }
+
+    /**
+     * Export the report using 2 dates in excel format.
+     */
+    public function exportReport(Request $request){
+        $request->validate([
+            'json_data' => 'required|string',
+        ]);
+
+        $json_data = $request->input('json_data');
+        $exportData = json_decode($json_data, true);
+    
+        $date1 = $exportData['date1'];
+        $date2 = $exportData['date2'];
+
+        $finalArray = [];
+        $project_ids = Billing::whereDate('date', '>=', $date1)->whereDate('date', '<=', $date2)->pluck('project_id')->unique()->toArray();
+        foreach ($project_ids as $id) {
+            $project = Project::with(['billings' => function ($query) use ($date1, $date2) {
+                $query->whereDate('date', '>=', $date1)->whereDate('date', '<=', $date2);
+            }])->find($id);
+        
+            if ($project) {
+                $finalArray[] = array(
+                    'Client name' => $project->client->name,
+                    'Project Name' => $project->name,
+                    'Project type' => $project->project_type,
+                    'Hourly rate' => $project->hourly_rate,
+                    'Earn' => $project->billings->sum('amount'),
+                );
+            }
+        }
+        return Excel::download(new ExportReport($finalArray), 'Report_Export.xlsx');
+        
+        // return redirect()->back()->with('status', "Data being processed from $date1 to $date2");
     }
 }
