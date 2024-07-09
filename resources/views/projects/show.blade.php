@@ -31,6 +31,13 @@
                 </div>
 
                 <div class="row">
+                    <label for="project_profile" class="col-md-4 col-form-label text-md-end text-start"><strong>Project Profile:</strong></label>
+                    <div class="col-md-6" style="line-height: 35px;">
+                        {{ $project->project_profile }}
+                    </div>
+                </div>
+
+                <div class="row">
                     <label for="description" class="col-md-4 col-form-label text-md-end text-start"><strong>Description:</strong></label>
                     <div class="col-md-6" style="line-height: 35px;">
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#descriptionPopUp"><i class="bi bi-door-open"></i> Open</button>

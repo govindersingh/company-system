@@ -44,6 +44,16 @@
                     </div>
 
                     <div class="mb-3 row">
+                        <label for="project_profile" class="col-md-4 col-form-label text-md-end text-start">Project Profile</label>
+                        <div class="col-md-6">
+                          <input type="text" class="form-control @error('project_profile') is-invalid @enderror" id="project_profile" name="project_profile" value="{{ old('project_profile') }}">
+                            @if ($errors->has('project_profile'))
+                                <span class="text-danger">{{ $errors->first('project_profile') }}</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
                         <label for="description" class="col-md-4 col-form-label text-md-end text-start">Description</label>
                         <div class="col-md-6">
                             <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description">{{ old('description') }}</textarea>

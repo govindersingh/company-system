@@ -8,6 +8,7 @@ use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
@@ -26,10 +27,21 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
+        $query = Client::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%");
+        }
+        
+        $clients = $query->latest()->paginate(10);
+
         return view('clients.index', [
-            'clients' => Client::latest()->paginate(10)
+            'clients' => $clients,
+            'search' => $search ?? ''
         ]);
     }
 

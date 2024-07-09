@@ -17,32 +17,32 @@ class SuperAdminSeeder extends Seeder
         // Creating Super Admin User
         $superAdmin = User::create([
             'name' => 'Govinder Singh', 
-            'email' => 'govinder@bytecode.com',
-            'password' => Hash::make('govinder')
+            'email' => 'govinder.bytecode@gmail.com',
+            'password' => Hash::make('govinder.bytecode@gmail.com')
         ]);
         $superAdmin->assignRole('Super Admin');
 
         // Creating Admin User
         $admin = User::create([
             'name' => 'Gagandeep Singh', 
-            'email' => 'gagan@bytecode.com',
-            'password' => Hash::make('gagan')
+            'email' => 'gagandeep.singh@bytecodetechnologies.in',
+            'password' => Hash::make('gagandeep.singh@bytecodetechnologies.in')
         ]);
         $admin->assignRole('Admin');
 
         // Creating Client Manager User
         $clientManager = User::create([
             'name' => 'Gaurav thapa', 
-            'email' => 'gaurav@bytecode.com',
-            'password' => Hash::make('gaurav')
+            'email' => 'gaurav@bytecodetechnologies.in',
+            'password' => Hash::make('gaurav@bytecodetechnologies.in')
         ]);
         $clientManager->assignRole('Client Manager');
 
         // Creating Developer User
         $developerManager = User::create([
             'name' => 'Reshav', 
-            'email' => 'reshav@bytecode.com',
-            'password' => Hash::make('reshav')
+            'email' => 'reshav@bytecodetechnologies.in',
+            'password' => Hash::make('reshav@bytecodetechnologies.in')
         ]);
         $developerManager->assignRole('Developer');
     }

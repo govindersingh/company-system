@@ -7,6 +7,12 @@
         @can('create-project')
             <a href="{{ route('projects.create') }}" class="btn btn-success btn-sm my-2"><i class="bi bi-plus-circle"></i> Add New Project</a>
         @endcan
+        <form action="{{ route('projects.index') }}" method="GET" class="d-flex justify-content-end mb-3">
+            <div class="input-group" style="width: 300px;">
+                <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request('search') }}">
+                <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Search</button>
+            </div>
+        </form>
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>

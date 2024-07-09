@@ -26,6 +26,7 @@ class StoreProjectRequest extends FormRequest
         return [
             'client_id' => 'required|integer|max:250',
             'name' => 'required|string|max:250',
+            'project_profile' => 'required|string|max:250',
             'description' => 'string',
             'start_date' => 'required|date',
             'project_type' => [
@@ -34,6 +35,7 @@ class StoreProjectRequest extends FormRequest
                 Rule::in([
                     Project::STATUS_FIXED,
                     Project::STATUS_HOURLY,
+                    Project::STATUS_MANUALY,
                 ]),
             ],
             'status' => [

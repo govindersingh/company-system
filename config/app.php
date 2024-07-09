@@ -208,7 +208,8 @@ return [
 
     'enum_project_type' => [
         'Fixed',
-        'Hourly'
+        'Hourly',
+        'Manualy'
     ],
 
 ];

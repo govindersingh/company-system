@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
@@ -25,10 +26,25 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = Project::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                ->orWhereHas('client', function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%");
+                });
+            });
+        }
+
+        $projects = $query->latest()->paginate(10);
+
         return view('projects.index', [
-            'projects' => Project::latest()->paginate(10)
+            'projects' => $projects,
+            'search' => $search ?? ''
         ]);
     }
 

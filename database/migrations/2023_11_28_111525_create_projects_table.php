@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('client_id');
             $table->string('name');
+            $table->string('project_profile');
             $table->longText('description')->nullable();
             $table->date('start_date');
             $table->date('end_date')->nullable();

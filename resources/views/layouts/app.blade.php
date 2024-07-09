@@ -21,7 +21,7 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    
+    @notifyCss
 </head>
 <body>
     <div id="app">
@@ -56,6 +56,8 @@
                                 </li>
                             @endif
                         @else
+                            <li><a class="nav-link text-dark" href="{{ url('/') }}">Home</a></li>
+
                             @canany(['show-client', 'create-client', 'edit-client', 'delete-client'])
                                 <li><a class="nav-link text-dark" href="{{ route('clients.index') }}">Clients</a></li>
                             @endcanany
@@ -78,6 +80,8 @@
                                 <li><a class="nav-link text-dark" href="{{ route('reports.index') }}">Report</a></li>
                             @endcanany
 
+                            <!-- <li><a class="nav-link text-dark" href="{{ route('chatify') }}">Messages</a></li> -->
+                            
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
@@ -135,5 +139,7 @@
             </div>
         </main>
     </div>
+    <x-notify::notify />
+    @notifyJs
 </body>
 </html>

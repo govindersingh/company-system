@@ -11,6 +11,7 @@ class Project extends Model
 
     public const STATUS_FIXED = 'Fixed';
     public const STATUS_HOURLY = 'Hourly';
+    public const STATUS_MANUALY = 'Manualy';
 
     public const STATUS_OPEN = 'Open';
     public const STATUS_CLOSE = 'Close';
@@ -19,6 +20,7 @@ class Project extends Model
     protected $fillable = [
         'client_id',
         'name',
+        'project_profile',
         'description',
         'start_date',
         'end_date',

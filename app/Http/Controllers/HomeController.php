@@ -23,6 +23,13 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // $user_name = auth()->user()->name;
+        // emotify('success', "Welcome back $user_name. Good luck!");
+        // notify()->success('Welcome to Laravel Notify ⚡️'); or notify()->success('Welcome to Laravel Notify ⚡️', 'My custom title');
+        // drakify('success'); or drakify('error');
+        // smilify('success', 'You are successfully reconnected');
+        // emotify('success', 'You are awesome, your data was successfully created');
+
         return view('home');
     }
 }
